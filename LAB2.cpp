@@ -12,7 +12,11 @@ int main()
         cin >> a >> sign >> b;
         if(sign == '-')
 			cout << " = " << a - b << "\n";
-        else
+        else if(sign == '+')
             cout << " = " << a + b << "\n";
+        else if(sign == '*')
+            cout << " = " << a * b << "\n";
+    	else if (sign == '/')
+            cout << " = " << a / b << "\n";
     }
 }

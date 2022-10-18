@@ -1,5 +1,7 @@
 #include "longint.h"
 
+#include <algorithm>
+
 void longint::copy_init(const vector<char>& copy_buff, bool copy_negative)
 {
 	buffer = vector<char>(copy_buff);
@@ -56,10 +58,19 @@ string longint::to_string() const
 	return s.str();
 }
 
-char& longint::operator[](int i)
+char& longint::operator[](size_t i)
 { return buffer[i]; }
-const char& longint::operator[](int i) const
+const char& longint::operator[](size_t i) const
 { return buffer[i]; }
+
+longint& longint::operator<<=(size_t i)
+{
+	if (buffer.size() == 1 && buffer[0] == 0)
+		return *this;
+
+	buffer.insert(buffer.begin(), i, 0);
+	return *this;
+}
 
 ostream& operator<<(ostream& out, const longint& n)
 {
@@ -115,7 +126,6 @@ void sum(longint& a, const longint& b)
 		buff /= longint::base;
 	}
 	if (buff != 0) a.buffer.push_back(buff);
-	return;
 }
 void subtract(const longint& fr, const longint& wh, longint& res)
 {
@@ -170,14 +180,93 @@ void linear(longint& a, const longint& b, bool sign)
 	}
 }
 
-longint& operator+(longint& a, const longint& b)
+longint operator+(const longint& a, const longint& b)
+{
+	longint buff = a;
+	linear(buff, b, false);
+	return move(buff);
+}
+
+longint& operator+=(longint& a, const longint& b)
 {
 	linear(a, b, false);
 	return a;
 }
 
-longint& operator-(longint& a, const longint& b)
+longint operator-(const longint& a, const longint& b)
+{
+	longint buff = a;
+	linear(buff, b, true);
+	return move(buff);
+}
+
+longint& operator-=(longint& a, const longint& b)
 {
 	linear(a, b, true);
 	return a;
+}
+
+void dmul(longint &a, const char b)
+{
+	char buff = 0;
+	for (size_t i = 0; i < a.buffer.size(); i++)
+	{
+		buff += a[i] * b;
+		a[i] = buff % longint::base;
+		buff /= longint::base;
+	}
+	if (buff != 0) a.buffer.push_back(buff);
+}
+
+longint operator*(const longint& a, const longint& b)
+{
+	longint ret(0), buff;
+	for(size_t i = 0; i < b.buffer.size(); i++)
+	{
+		buff = a;
+		dmul(buff, b[i]);
+		buff <<= i;
+		sum(ret, buff);
+	}
+	ret.negative = a.negative ^ b.negative;
+	return move(ret);
+}
+
+longint operator/(const longint& a, const longint& b)
+{
+	switch (cmp(a, b))
+	{
+	case -1:
+		return 0;
+	case 0:
+		return a.negative ^ b.negative ? -1 : 1;
+	}
+
+	vector<char> ret(0);
+	const size_t l = a.buffer.size();
+	ret.reserve(l);
+	longint buff(0);
+	char d;
+	for(size_t i = 0; i < l; i++)
+	{
+		buff <<= 1;
+		buff += a[l - i - 1];
+		if (cmp(buff, b) >= 0)
+		{
+			d = 0;
+			while (cmp(buff, b) >= 0)
+			{
+				subtract(buff, b, buff);
+				d++;
+			}
+			ret.push_back(d);
+		}
+		else ret.push_back(0);
+	}
+
+	reverse(ret.begin(), ret.end());
+	size_t nulls = 0;
+	while (ret[l - nulls - 1] == 0) nulls++;
+	ret.resize(l - nulls);
+	return move(longint(move(ret), a.negative ^ b.negative));
 }

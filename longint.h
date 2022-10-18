@@ -22,6 +22,8 @@ private:
 	friend void sum(longint& a, const longint& b);
 	friend void subtract(const longint& fr, const longint& wh, longint& res);
 
+	friend void dmul(longint& a, const char b);
+
 public:
 	longint(long n = 0);
 
@@ -38,13 +40,19 @@ public:
 
 	string to_string() const;
 
-	inline char& operator[](int i);
-	inline const char& operator[](int i) const;
+	inline char& operator[](size_t i);
+	inline const char& operator[](size_t i) const;
+
+	inline longint& operator<<=(size_t i);
 
 	friend char cmp(const longint& a, const longint& b);
 
-	friend longint& operator+(longint& a, const longint& b);
-	friend longint& operator-(longint& a, const longint& b);
-	friend longint& operator*(longint& a, const longint& b);
-	friend longint& operator/(longint& a, const longint& b);
+	friend longint operator+(const longint& a, const longint& b);
+	friend longint& operator+=(longint& a, const longint& b);
+	friend longint operator-(const longint& a, const longint& b);
+	friend longint& operator-=(longint& a, const longint& b);
+	friend longint operator*(const longint& a, const longint& b);
+	friend longint& operator*=(longint& a, const longint& b);
+	friend longint operator/(const longint& a, const longint& b);
+	friend longint& operator/=(longint& a, const longint& b);
 };
