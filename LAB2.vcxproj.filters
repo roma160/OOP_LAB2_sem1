@@ -18,5 +18,13 @@
     <ClCompile Include="LAB2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="longint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="longint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
