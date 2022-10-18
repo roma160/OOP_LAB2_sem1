@@ -3,7 +3,16 @@
 
 int main()
 {
-    longint i;
-    cin >> i;
-    cout << i;
+    int i = 0;
+    char sign;
+    longint a, b;
+    while (true)
+    {
+        cout << ++i << ") ";
+        cin >> a >> sign >> b;
+        if(sign == '-')
+			cout << " = " << a - b << "\n";
+        else
+            cout << " = " << a + b << "\n";
+    }
 }
