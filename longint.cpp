@@ -163,6 +163,7 @@ void subtract(const longint& fr, const longint& wh, longint& res)
 			continue;
 		}
 
+		// BASE_DEPENDENT
 		res[i] = longint::base + fr[i] - wh[i] - buff;
 		buff = 1;
 	}
@@ -173,6 +174,8 @@ void subtract(const longint& fr, const longint& wh, longint& res)
 			res[i] = fr[i] - buff;
 			break;
 		}
+
+		// BASE_DEPENDENT
 		res[i] = longint::base + fr[i] - buff;
 		buff = 1;
 	}
