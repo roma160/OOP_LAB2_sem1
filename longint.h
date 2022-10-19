@@ -9,26 +9,31 @@ using namespace std;
 
 class longint
 {
-private:
-	const static char base = 10;
+public:
+	typedef char dt;
+	const static dt base = 10;
 
-	vector<char> buffer;
+private:
+	vector<dt> buffer;
 	bool negative;
 
-	void copy_init(const vector<char>& copy_buff, bool copy_negative);
-	void move_init(vector<char>&& move_buff, bool move_negative);
+	void copy_init(const vector<dt>& copy_buff, bool copy_negative);
+	void move_init(vector<dt>&& move_buff, bool move_negative);
 
 	friend void linear(longint& a, const longint& b, bool negation);
 	friend void sum(longint& a, const longint& b);
 	friend void subtract(const longint& fr, const longint& wh, longint& res);
 
-	friend void dmul(longint& a, const char b);
+	friend void dmul(longint& a, dt b);
+	friend longint trivial_mul(const longint& a, const longint& b);
+	friend longint r_karatsuba(const longint& a, const longint& b);
+	friend longint karatsuba(const longint& buff_a, const longint& buff_b);
 
 public:
 	longint(long n = 0);
 
-	longint(const vector<char>& copy_buffer, bool copy_negative);
-	longint(vector<char>&& move_buffer, bool move_negative);
+	longint(const vector<dt>& copy_buffer, bool copy_negative);
+	longint(vector<dt>&& move_buffer, bool move_negative);
 	longint(const longint& to_copy);
 	longint(longint&& to_move);
 
@@ -40,12 +45,13 @@ public:
 
 	string to_string() const;
 
-	inline char& operator[](size_t i);
-	inline const char& operator[](size_t i) const;
+	inline dt& operator[](size_t i);
+	inline const dt& operator[](size_t i) const;
 
 	inline longint& operator<<=(size_t i);
+	inline longint& operator>>=(size_t i);
 
-	friend char cmp(const longint& a, const longint& b);
+	friend dt cmp(const longint& a, const longint& b);
 
 	friend longint operator+(const longint& a, const longint& b);
 	friend longint& operator+=(longint& a, const longint& b);

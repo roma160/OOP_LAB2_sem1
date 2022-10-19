@@ -2,16 +2,29 @@
 
 #include <algorithm>
 
-void longint::copy_init(const vector<char>& copy_buff, bool copy_negative)
+using dt = longint::dt;
+
+void shrieking_buffer(vector<dt>& buffer, bool& negative)
 {
-	buffer = vector<char>(copy_buff);
-	negative = copy_negative;
+	size_t l = buffer.size();
+	while (l > 1 && buffer[l - 1] == 0) l--;
+	buffer.resize(l);
+	if (l == 1 && buffer[0] == 0)
+		negative = false;
 }
 
-void longint::move_init(vector<char>&& move_buff, bool move_negative)
+void longint::copy_init(const vector<dt>& copy_buff, bool copy_negative)
+{
+	buffer = vector<dt>(copy_buff);
+	negative = copy_negative;
+	shrieking_buffer(buffer, negative);
+}
+
+void longint::move_init(vector<dt>&& move_buff, bool move_negative)
 {
 	buffer = move(move_buff);
 	negative = move_negative;
+	shrieking_buffer(buffer, negative);
 }
 
 
@@ -30,9 +43,9 @@ longint::longint(long n): buffer(0), negative(false)
 	} while (n);
 }
 
-longint::longint(const vector<char>& copy_buffer, bool copy_negative)
+longint::longint(const vector<dt>& copy_buffer, bool copy_negative = false)
 { copy_init(copy_buffer, copy_negative); }
-longint::longint(vector<char>&& move_buffer, bool move_negative)
+longint::longint(vector<dt>&& move_buffer, bool move_negative = false)
 { move_init(move(move_buffer), move_negative); }
 longint::longint(const longint& to_copy)
 { copy_init(to_copy.buffer, to_copy.negative); }
@@ -54,21 +67,32 @@ string longint::to_string() const
 	stringstream s;
 	if (negative) s << '-';
 	for (size_t i = buffer.size(); i > 0; i--)
-		s << (char) (buffer[i - 1] + '0');
+		s << (dt) (buffer[i - 1] + '0');
 	return s.str();
 }
 
-char& longint::operator[](size_t i)
+dt& longint::operator[](size_t i)
 { return buffer[i]; }
-const char& longint::operator[](size_t i) const
+const dt& longint::operator[](size_t i) const
 { return buffer[i]; }
 
-longint& longint::operator<<=(size_t i)
+longint& longint::operator<<=(const size_t i)
 {
 	if (buffer.size() == 1 && buffer[0] == 0)
 		return *this;
 
 	buffer.insert(buffer.begin(), i, 0);
+	return *this;
+}
+longint& longint::operator>>=(const size_t i)
+{
+	if (i == 0 || (buffer.size() == 1 && buffer[0] == 0))
+		return *this;
+
+	const size_t l = buffer.size();
+	for(size_t j = i; j < l; j++)
+		buffer[j - i] = buffer[j];
+	buffer.resize(l - i);
 	return *this;
 }
 
@@ -84,7 +108,7 @@ istream& operator>>(istream& in, longint& n)
 	in >> buff;
 
 	const bool negative = buff[0] == '-';
-	vector<char> buffer(buff.size() - negative);
+	vector<dt> buffer(buff.size() - negative);
 	for (size_t i = 0; i < buff.size() - negative; i++)
 		buffer[i] = buff[buff.size() - i - 1] - '0';
 
@@ -92,7 +116,7 @@ istream& operator>>(istream& in, longint& n)
 	return in;
 }
 
-char cmp(const longint& a, const longint& b)
+dt cmp(const longint& a, const longint& b)
 {
 	if (a.buffer.size() != b.buffer.size())
 		return a.buffer.size() > b.buffer.size() ? 1 : -1;
@@ -110,7 +134,7 @@ void sum(longint& a, const longint& b)
 	if(a.buffer.size() < m)
 		a.buffer.resize(b.buffer.size());
 
-	char buff = 0;
+	dt buff = 0;
 	for(size_t i = 0; i < m; i++)
 	{
 		buff += a[i] + b[i];
@@ -129,7 +153,7 @@ void sum(longint& a, const longint& b)
 }
 void subtract(const longint& fr, const longint& wh, longint& res)
 {
-	char buff = 0;
+	dt buff = 0;
 	for (size_t i = 0; i < wh.buffer.size(); i++)
 	{
 		if (fr[i] >= wh[i] + buff)
@@ -153,11 +177,7 @@ void subtract(const longint& fr, const longint& wh, longint& res)
 		buff = 1;
 	}
 
-	size_t i = res.buffer.size() - 1;
-	while (res.buffer[i] == 0 && i > 0) i--;
-	res.buffer.resize(i + 1);
-	if (i == 0 && res.buffer[i] == 0)
-		res.negative = false;
+	shrieking_buffer(res.buffer, res.negative);
 }
 
 void linear(longint& a, const longint& b, bool sign)
@@ -206,9 +226,9 @@ longint& operator-=(longint& a, const longint& b)
 	return a;
 }
 
-void dmul(longint &a, const char b)
+void dmul(longint &a, const dt b)
 {
-	char buff = 0;
+	dt buff = 0;
 	for (size_t i = 0; i < a.buffer.size(); i++)
 	{
 		buff += a[i] * b;
@@ -218,9 +238,58 @@ void dmul(longint &a, const char b)
 	if (buff != 0) a.buffer.push_back(buff);
 }
 
-longint operator*(const longint& a, const longint& b)
+longint karatsuba(const longint& buff_a, const longint& buff_b);
+longint r_karatsuba(const longint& a, const longint& b)
 {
-	longint ret(0), buff;
+	if (a.buffer.size() > 1 && b.buffer.size() > 1)
+		return karatsuba(a, b);
+
+	const longint* small = &a, *big = &b;
+	if (small->buffer.size() != 1)
+		swap(small, big);
+	longint ret = *big;
+	dmul(ret, small->buffer[0]);
+	return ret;
+}
+
+longint karatsuba(const longint& a, const longint& b)
+{
+	size_t l = a.buffer.size();
+	longint buff;
+	const longint* buff_a = &a, * buff_b = &buff;
+	if (b.buffer.size() > l)
+	{
+		l = b.buffer.size();
+		buff = a;
+		buff_a = &b;
+	}
+	else buff = b;
+	buff.buffer.insert(buff.buffer.end(), l - buff.buffer.size(), 0);
+
+	const auto begin_a = buff_a->buffer.begin(), end_a = buff_a->buffer.end();
+	const auto begin_b = buff_b->buffer.begin(), end_b = buff_b->buffer.end();
+
+	l /= 2;
+	longint A(vector<dt>(begin_a + l, end_a)),
+		B(vector<dt>(begin_a, begin_a + l)),
+		C(vector<dt>(begin_b + l, end_b)),
+		D(vector<dt>(begin_b, begin_b + l));
+	longint APB = A + B, CPD = C + D;
+
+	longint AC = r_karatsuba(A, C);
+	longint BD = r_karatsuba(B, D);
+	longint big = r_karatsuba(A + B, C + D) - AC - BD;
+
+	AC <<= l * 2;
+	big <<= l;
+
+	return AC + big + BD;
+}
+
+longint trivial_mul(const longint& a, const longint& b)
+{
+	longint ret = 0;
+	longint buff;
 	for(size_t i = 0; i < b.buffer.size(); i++)
 	{
 		buff = a;
@@ -229,8 +298,11 @@ longint operator*(const longint& a, const longint& b)
 		sum(ret, buff);
 	}
 	ret.negative = a.negative ^ b.negative;
-	return move(ret);
+	return ret;
 }
+
+longint operator*(const longint& a, const longint& b)
+{ return r_karatsuba(a, b); }
 
 longint operator/(const longint& a, const longint& b)
 {
@@ -242,11 +314,11 @@ longint operator/(const longint& a, const longint& b)
 		return a.negative ^ b.negative ? -1 : 1;
 	}
 
-	vector<char> ret(0);
+	vector<dt> ret(0);
 	const size_t l = a.buffer.size();
 	ret.reserve(l);
 	longint buff(0);
-	char d;
+	dt d;
 	for(size_t i = 0; i < l; i++)
 	{
 		buff <<= 1;
@@ -265,8 +337,5 @@ longint operator/(const longint& a, const longint& b)
 	}
 
 	reverse(ret.begin(), ret.end());
-	size_t nulls = 0;
-	while (ret[l - nulls - 1] == 0) nulls++;
-	ret.resize(l - nulls);
 	return move(longint(move(ret), a.negative ^ b.negative));
 }
