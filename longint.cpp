@@ -1,4 +1,5 @@
 #include "longint.h"
+#include "algorithms/multiplication.h"
 
 #include <algorithm>
 
@@ -241,54 +242,6 @@ void dmul(longint &a, const dt b)
 	if (buff != 0) a.buffer.push_back(buff);
 }
 
-longint karatsuba(const longint& buff_a, const longint& buff_b);
-longint r_karatsuba(const longint& a, const longint& b)
-{
-	if (a.buffer.size() > 1 && b.buffer.size() > 1)
-		return karatsuba(a, b);
-
-	const longint* small = &a, *big = &b;
-	if (small->buffer.size() != 1)
-		swap(small, big);
-	longint ret = *big;
-	dmul(ret, small->buffer[0]);
-	return ret;
-}
-
-longint karatsuba(const longint& a, const longint& b)
-{
-	size_t l = a.buffer.size();
-	longint buff;
-	const longint* buff_a = &a, * buff_b = &buff;
-	if (b.buffer.size() > l)
-	{
-		l = b.buffer.size();
-		buff = a;
-		buff_a = &b;
-	}
-	else buff = b;
-	buff.buffer.insert(buff.buffer.end(), l - buff.buffer.size(), 0);
-
-	const auto begin_a = buff_a->buffer.begin(), end_a = buff_a->buffer.end();
-	const auto begin_b = buff_b->buffer.begin(), end_b = buff_b->buffer.end();
-
-	l /= 2;
-	longint A(vector<dt>(begin_a + l, end_a)),
-		B(vector<dt>(begin_a, begin_a + l)),
-		C(vector<dt>(begin_b + l, end_b)),
-		D(vector<dt>(begin_b, begin_b + l));
-	longint APB = A + B, CPD = C + D;
-
-	longint AC = r_karatsuba(A, C);
-	longint BD = r_karatsuba(B, D);
-	longint big = r_karatsuba(A + B, C + D) - AC - BD;
-
-	AC <<= l * 2;
-	big <<= l;
-
-	return AC + big + BD;
-}
-
 longint trivial_mul(const longint& a, const longint& b)
 {
 	longint ret = 0;
@@ -305,7 +258,7 @@ longint trivial_mul(const longint& a, const longint& b)
 }
 
 longint operator*(const longint& a, const longint& b)
-{ return r_karatsuba(a, b); }
+{ return karatsuba(a, b); }
 
 longint operator/(const longint& a, const longint& b)
 {

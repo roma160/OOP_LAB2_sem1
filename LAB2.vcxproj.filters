@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="algorithms">
+      <UniqueIdentifier>{4aec55d1-2551-4069-9c1b-a42038dc422b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LAB2.cpp">
@@ -21,10 +24,16 @@
     <ClCompile Include="longint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="algorithms\multiplication.cpp">
+      <Filter>algorithms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="longint.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithms\multiplication.h">
+      <Filter>algorithms</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
