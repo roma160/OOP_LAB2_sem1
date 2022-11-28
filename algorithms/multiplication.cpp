@@ -1,6 +1,12 @@
+#include <complex>
+
 #include "multiplication.h"
 
+# define M_PI           3.14159265358979323846  /* pi */
+
 using dt = longint::dt;
+
+// KARATSUBA
 
 longint r_karatsuba(const longint& a, const longint& b);
 longint multiplication::karatsuba(const longint& a, const longint& b)
@@ -47,6 +53,8 @@ longint r_karatsuba(const longint& a, const longint& b)
 	return buff;
 }
 
+
+// TOOM-COOK
 
 longint r_toomcook(const longint& a, const longint& b);
 longint multiplication::toomcook(const longint& a, const longint& b)
@@ -117,9 +125,80 @@ longint r_toomcook(const longint& a, const longint& b)
     r2 = r2 + r1 - r4;
     r1 = r1 - r3;
 
-    return r0 +
+    longint buff = r0 +
         (r1 << part_size) +
         (r2 << part_size * 2) +
         (r3 << part_size * 3) +
         (r4 << part_size * 4);
+    buff.negative = a.negative ^ b.negative;
+    return buff;
+}
+
+
+// SHENGAGE
+
+void fft(vector<complex<double>>& a, bool invert) {
+    size_t n = a.size();
+    if (n == 1) return;
+
+    vector<complex<double>> a0(n / 2), a1(n / 2);
+    for (size_t i = 0, j = 0; i < n; i += 2, j++) {
+        a0[j] = a[i];
+        a1[j] = a[i + 1];
+    }
+    fft(a0, invert);
+    fft(a1, invert);
+
+    double ang = 2 * M_PI / n * (invert ? -1 : 1);
+    complex<double> w(1), wn(cos(ang), sin(ang));
+    for (size_t i = 0; i < n / 2; i++) {
+        a[i] = a0[i] + w * a1[i];
+        a[i + n / 2] = a0[i] - w * a1[i];
+        if (invert)
+            a[i] /= 2, a[i + n / 2] /= 2;
+        w *= wn;
+    }
+}
+
+longint r_shengage(const longint& a, const longint& b);
+longint multiplication::shengage(const longint& a, const longint& b)
+{
+    const longint* small = &a, * big = &b;
+    if (small->buffer.size() > big->buffer.size())
+        swap(big, small);
+
+    size_t l = big->buffer.size(), n = 1;
+    while (n < l) n <<= 1;
+    n <<= 1;
+
+    vector<complex<double>> f1(n, 0), f2(n, 0);
+    for (size_t i = 0; i < small->buffer.size(); i++)
+    {
+        f1[i] = small->buffer[i];
+        f2[i] = big->buffer[i];
+    }
+    for (size_t i = small->buffer.size(); i < big->buffer.size(); i++)
+        f2[i] = big->buffer[i];
+
+    fft(f1, false), fft(f2, false);
+    for (size_t i = 0; i < n; ++i)
+        f1[i] *= f2[i];
+    fft(f1, true);
+
+    longint res(0);
+    int carry = 0;
+    int temp;
+    for (size_t i = 0; i < n; ++i) {
+        temp = int(f1[i].real() + 0.5) + carry;
+        carry = temp / longint::base;
+        temp %= longint::base;
+
+        res.buffer.push_back(temp);
+    }
+    res.buffer.push_back(carry);
+    res.normalize();
+    res >>= 1;
+    res.negative = a.negative ^ b.negative;
+
+    return res;
 }

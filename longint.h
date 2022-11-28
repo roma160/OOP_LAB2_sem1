@@ -28,6 +28,7 @@ private:
 	friend class multiplication;
 	friend longint r_karatsuba(const longint& a, const longint& b);
 	friend longint r_toomcook(const longint& a, const longint& b);
+	friend longint r_shengage(const longint& a, const longint& b);
 
 public:
 	longint(long n = 0);

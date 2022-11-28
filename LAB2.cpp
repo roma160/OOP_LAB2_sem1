@@ -17,7 +17,7 @@ int main()
         else if(sign == '+')
             cout << " = " << a + b << "\n";
         else if(sign == '*')
-            cout << " = " << multiplication::toomcook(a, b) << "\n";
+            cout << " = " << multiplication::shengage(a, b) << "\n";
     	else if (sign == '/')
             cout << " = " << a / b << "\n";
     }
