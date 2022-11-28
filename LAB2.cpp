@@ -1,5 +1,7 @@
 #include <iostream>
+
 #include "longint.h"
+#include "algorithms/multiplication.h"
 
 int main()
 {
@@ -15,7 +17,7 @@ int main()
         else if(sign == '+')
             cout << " = " << a + b << "\n";
         else if(sign == '*')
-            cout << " = " << a * b << "\n";
+            cout << " = " << multiplication::toomcook(a, b) << "\n";
     	else if (sign == '/')
             cout << " = " << a / b << "\n";
     }

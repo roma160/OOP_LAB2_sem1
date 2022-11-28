@@ -25,8 +25,9 @@ private:
 
 	friend void dmul(longint& a, dt b);
 	friend longint trivial_mul(const longint& a, const longint& b);
+	friend class multiplication;
 	friend longint r_karatsuba(const longint& a, const longint& b);
-	friend longint karatsuba(const longint& buff_a, const longint& buff_b);
+	friend longint r_toomcook(const longint& a, const longint& b);
 
 public:
 	longint(long n = 0);
@@ -49,6 +50,11 @@ public:
 
 	inline longint& operator<<=(size_t i);
 	inline longint& operator>>=(size_t i);
+	friend longint operator<<(const longint& a, size_t i);
+	friend longint operator>>(const longint& a, size_t i);
+
+	void normalize();
+	void denormalize(size_t to_size);
 
 	friend dt cmp(const longint& a, const longint& b);
 

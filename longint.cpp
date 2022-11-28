@@ -5,27 +5,19 @@
 
 using dt = longint::dt;
 
-void shrieking_buffer(vector<dt>& buffer, bool& negative)
-{
-	size_t l = buffer.size();
-	while (l > 1 && buffer[l - 1] == 0) l--;
-	buffer.resize(l);
-	if (l == 1 && buffer[0] == 0)
-		negative = false;
-}
 
 void longint::copy_init(const vector<dt>& copy_buff, bool copy_negative)
 {
 	buffer = vector<dt>(copy_buff);
 	negative = copy_negative;
-	shrieking_buffer(buffer, negative);
+	normalize();
 }
 
 void longint::move_init(vector<dt>&& move_buff, bool move_negative)
 {
 	buffer = move(move_buff);
 	negative = move_negative;
-	shrieking_buffer(buffer, negative);
+	normalize();
 }
 
 
@@ -96,6 +88,32 @@ longint& longint::operator>>=(const size_t i)
 	buffer.resize(l - i);
 	return *this;
 }
+
+longint operator<<(const longint& a, size_t i)
+{
+	longint ret(a);
+	ret <<= i;
+	return ret;
+}
+
+longint operator>>(const longint& a, size_t i)
+{
+	longint ret(a);
+	ret >>= i;
+	return ret;
+}
+
+void longint::normalize()
+{
+	size_t l = buffer.size();
+	while (l > 1 && buffer[l - 1] == 0) l--;
+	buffer.resize(l);
+	if (l == 1 && buffer[0] == 0)
+		negative = false;
+}
+
+void longint::denormalize(size_t to_size)
+{ buffer.insert(buffer.end(), to_size - buffer.size(), 0); }
 
 ostream& operator<<(ostream& out, const longint& n)
 {
@@ -181,7 +199,7 @@ void subtract(const longint& fr, const longint& wh, longint& res)
 		buff = 1;
 	}
 
-	shrieking_buffer(res.buffer, res.negative);
+	res.normalize();
 }
 
 void linear(longint& a, const longint& b, bool sign)
@@ -258,7 +276,7 @@ longint trivial_mul(const longint& a, const longint& b)
 }
 
 longint operator*(const longint& a, const longint& b)
-{ return karatsuba(a, b); }
+{ return multiplication::karatsuba(a, b); }
 
 longint operator/(const longint& a, const longint& b)
 {
