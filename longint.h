@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <tuple>
 
 using namespace std;
 
@@ -29,6 +30,9 @@ private:
 	friend longint r_karatsuba(const longint& a, const longint& b);
 	friend longint r_toomcook(const longint& a, const longint& b);
 	friend longint r_shengage(const longint& a, const longint& b);
+
+	friend class division;
+	friend tuple<longint, longint> toom(const longint& a, const longint& b);
 
 public:
 	longint(long n = 0);

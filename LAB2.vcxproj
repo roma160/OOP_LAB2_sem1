@@ -144,11 +144,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="algorithms\multiplication.cpp" />
+    <ClCompile Include="division.cpp" />
     <ClCompile Include="LAB2.cpp" />
     <ClCompile Include="longint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="algorithms\multiplication.h" />
+    <ClInclude Include="division.h" />
     <ClInclude Include="longint.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

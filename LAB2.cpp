@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "division.h"
 #include "longint.h"
 #include "algorithms/multiplication.h"
 
@@ -18,7 +19,9 @@ int main()
             cout << " = " << a + b << "\n";
         else if(sign == '*')
             cout << " = " << multiplication::shengage(a, b) << "\n";
-    	else if (sign == '/')
-            cout << " = " << a / b << "\n";
+        else if (sign == '/') {
+            tuple<longint, longint> res = division::toom(a, b);
+            cout << " = " << get<0>(res) << " " << get<1>(res) << "\n";
+        }
     }
 }
