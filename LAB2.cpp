@@ -2,11 +2,12 @@
 
 #include "division.h"
 #include "longint.h"
+#include "primality.h"
 #include "algorithms/multiplication.h"
 
 int main()
 {
-    int i = 0;
+    /*int i = 0;
     char sign;
     longint a, b;
     while (true)
@@ -23,5 +24,7 @@ int main()
             tuple<longint, longint> res = division::toom(a, b);
             cout << " = " << get<0>(res) << " " << get<1>(res) << "\n";
         }
-    }
+    }*/
+
+    cout << primality::lehmer(8);
 }

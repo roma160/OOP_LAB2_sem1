@@ -34,6 +34,9 @@ private:
 	friend class division;
 	friend tuple<longint, longint> toom(const longint& a, const longint& b);
 
+	friend class primality;
+	friend  bool lehmer(const longint& n);
+
 public:
 	longint(long n = 0);
 
@@ -71,4 +74,8 @@ public:
 	friend longint& operator*=(longint& a, const longint& b);
 	friend longint operator/(const longint& a, const longint& b);
 	friend longint& operator/=(longint& a, const longint& b);
+	friend longint operator%(const longint& a, const longint& b);
+	friend longint& operator%=(longint& a, const longint& b);
+
+	static longint long_pow(const longint& n, const longint& p);
 };

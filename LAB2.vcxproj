@@ -147,11 +147,13 @@
     <ClCompile Include="division.cpp" />
     <ClCompile Include="LAB2.cpp" />
     <ClCompile Include="longint.cpp" />
+    <ClCompile Include="primality.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="algorithms\multiplication.h" />
     <ClInclude Include="division.h" />
     <ClInclude Include="longint.h" />
+    <ClInclude Include="primality.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

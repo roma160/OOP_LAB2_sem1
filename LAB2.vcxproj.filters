@@ -30,6 +30,9 @@
     <ClCompile Include="division.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="primality.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="longint.h">
@@ -39,6 +42,9 @@
       <Filter>algorithms</Filter>
     </ClInclude>
     <ClInclude Include="division.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="primality.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

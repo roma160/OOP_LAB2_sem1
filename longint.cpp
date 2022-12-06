@@ -115,6 +115,19 @@ void longint::normalize()
 void longint::denormalize(size_t to_size)
 { buffer.insert(buffer.end(), to_size - buffer.size(), 0); }
 
+longint longint::long_pow(const longint& n, const longint& p)
+{
+	const dt c = cmp(p, 1);
+	if (c == 0) return n;
+	if (c == -1) return 1;
+	longint buff = p / 2;
+	buff = long_pow(n, p / 2);
+	buff = buff * buff;
+	if (p[0] % 2 == 1)
+		buff = buff * n;
+	return buff;
+}
+
 ostream& operator<<(ostream& out, const longint& n)
 {
 	out << n.to_string();
@@ -312,4 +325,10 @@ longint operator/(const longint& a, const longint& b)
 
 	reverse(ret.begin(), ret.end());
 	return move(longint(move(ret), a.negative ^ b.negative));
+}
+
+longint operator%(const longint& a, const longint& b)
+{
+	longint buff = a / b;
+	return a - buff * b;
 }
