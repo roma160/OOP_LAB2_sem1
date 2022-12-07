@@ -4,6 +4,10 @@
 #include "longint.h"
 #include "primality.h"
 #include "algorithms/multiplication.h"
+#include <map>
+#include <string>
+
+//map<string>
 
 int main()
 {
@@ -26,5 +30,5 @@ int main()
         }
     }*/
 
-    cout << primality::miller(172, 100);
+    cout << primality::strassen(18, 100);
 }

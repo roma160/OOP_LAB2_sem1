@@ -35,7 +35,9 @@ private:
 	friend tuple<longint, longint> toom(const longint& a, const longint& b);
 
 	friend class primality;
-	friend  bool lehmer(const longint& n);
+	friend bool lehmer(const longint& n);
+	friend bool miller(const longint& n, size_t num);
+	friend bool strassen(const longint& n, size_t num);
 
 public:
 	longint(long n = 0);
