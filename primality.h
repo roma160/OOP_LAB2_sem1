@@ -6,5 +6,6 @@ class primality
 public:
 
 	static bool lehmer(const longint& n);
+	static bool miller(const longint& n, size_t num);
 };
 

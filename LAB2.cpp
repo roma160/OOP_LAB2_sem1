@@ -26,5 +26,5 @@ int main()
         }
     }*/
 
-    cout << primality::lehmer(8);
+    cout << primality::miller(172, 100);
 }
